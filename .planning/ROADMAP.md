@@ -1,74 +1,32 @@
-# Roadmap: BMAD Automate - Status-Based Workflow Routing
+# Roadmap: BMAD Automate
 
-## Overview
+## Milestones
 
-Transform BMAD Automate from manual workflow selection to automatic status-based routing. The CLI will read story status from sprint-status.yaml and automatically select the correct workflow (create-story, dev-story, or code-review). Culminates in a new `epic` command for batch execution.
+- ✅ **v1.0 Status-Based Workflow Routing** — Phases 1-5 (shipped 2026-01-08)
 
-## Domain Expertise
+## Completed Milestones
 
-None
+- ✅ [v1.0 Status-Based Workflow Routing](milestones/v1.0-ROADMAP.md) (Phases 1-5) — SHIPPED 2026-01-08
 
-## Phases
+<details>
+<summary>✅ v1.0 Status-Based Workflow Routing (Phases 1-5) — SHIPPED 2026-01-08</summary>
 
-**Phase Numbering:**
+**Delivered:** Automatic workflow routing based on sprint-status.yaml, eliminating manual workflow selection.
 
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+- [x] Phase 1: Sprint Status Reader (1/1 plans) — completed 2026-01-08
+- [x] Phase 2: Workflow Router (1/1 plans) — completed 2026-01-08
+- [x] Phase 3: Update Run Command (1/1 plans) — completed 2026-01-08
+- [x] Phase 4: Update Queue Command (1/1 plans) — completed 2026-01-08
+- [x] Phase 5: Epic Command (1/1 plans) — completed 2026-01-08
 
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [x] **Phase 1: Sprint Status Reader** - Parse sprint-status.yaml and extract story statuses
-- [x] **Phase 2: Workflow Router** - Map story status to correct workflow
-- [x] **Phase 3: Update Run Command** - Apply status-based routing to run command
-- [x] **Phase 4: Update Queue Command** - Apply status-based routing to queue command
-- [x] **Phase 5: Epic Command** - New command to batch-run all epic stories with fail-fast
-
-## Phase Details
-
-### Phase 1: Sprint Status Reader
-
-**Goal**: Create a package that reads `_bmad-output/implementation-artifacts/sprint-status.yaml` and returns story status by key
-**Depends on**: Nothing (first phase)
-**Research**: Unlikely (YAML parsing in Go, established patterns)
-**Plans**: TBD
-
-### Phase 2: Workflow Router
-
-**Goal**: Create routing logic that maps status values to workflow names
-**Depends on**: Phase 1
-**Research**: Unlikely (internal logic, status-to-workflow mapping table)
-**Plans**: TBD
-
-### Phase 3: Update Run Command
-
-**Goal**: Modify `run` command to use status-based routing instead of explicit workflow flag
-**Depends on**: Phase 2
-**Research**: Unlikely (modifying existing command, codebase patterns known)
-**Plans**: TBD
-
-### Phase 4: Update Queue Command
-
-**Goal**: Modify `queue` command to use status-based routing for each story
-**Depends on**: Phase 3
-**Research**: Unlikely (same pattern as run command)
-**Plans**: TBD
-
-### Phase 5: Epic Command
-
-**Goal**: New `bmad-automate epic <epic-id>` command that runs all non-done stories in numeric order, stopping on first failure
-**Depends on**: Phase 4
-**Research**: Unlikely (follows existing command patterns, reuses router)
-**Plans**: TBD
+</details>
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
-
-| Phase                   | Plans Complete | Status   | Completed  |
-| ----------------------- | -------------- | -------- | ---------- |
-| 1. Sprint Status Reader | 1/1            | Complete | 2026-01-08 |
-| 2. Workflow Router      | 1/1            | Complete | 2026-01-08 |
-| 3. Update Run Command   | 1/1            | Complete | 2026-01-08 |
-| 4. Update Queue Command | 1/1            | Complete | 2026-01-08 |
-| 5. Epic Command         | 1/1            | Complete | 2026-01-08 |
+| Phase                   | Milestone | Plans Complete | Status   | Completed  |
+| ----------------------- | --------- | -------------- | -------- | ---------- |
+| 1. Sprint Status Reader | v1.0      | 1/1            | Complete | 2026-01-08 |
+| 2. Workflow Router      | v1.0      | 1/1            | Complete | 2026-01-08 |
+| 3. Update Run Command   | v1.0      | 1/1            | Complete | 2026-01-08 |
+| 4. Update Queue Command | v1.0      | 1/1            | Complete | 2026-01-08 |
+| 5. Epic Command         | v1.0      | 1/1            | Complete | 2026-01-08 |

@@ -2,11 +2,24 @@
 
 ## What This Is
 
-A CLI tool that orchestrates Claude CLI to run automated development workflows. Currently being enhanced to automatically detect story status from sprint-status.yaml and route to the appropriate workflow, plus a new `epic` command to batch-run all stories in an epic.
+A CLI tool that orchestrates Claude CLI to run automated development workflows. Now enhanced with automatic story status detection from sprint-status.yaml for workflow routing, plus an `epic` command for batch execution.
 
 ## Core Value
 
 Eliminate manual workflow selection by automatically routing stories to the correct workflow based on their status in sprint-status.yaml.
+
+## Current State (v1.0)
+
+**Shipped:** 2026-01-08
+
+Status-based workflow routing is complete:
+
+- `run <story>` — Automatically routes to correct workflow based on status
+- `queue <story>...` — Routes each story, skips done, fails fast
+- `epic <epic-id>` — Runs all stories for an epic in numeric order
+
+Tech stack: Go, Cobra, Viper, yaml.v3
+Codebase: 4,951 LOC Go
 
 ## Requirements
 
@@ -17,19 +30,18 @@ Eliminate manual workflow selection by automatically routing stories to the corr
 - ✓ Claude CLI subprocess execution with streaming JSON — existing
 - ✓ Event-driven output parsing — existing
 - ✓ Terminal formatting with Lipgloss — existing
-- ✓ Commands: create-story, dev-story, code-review, git-commit, run, queue, raw — existing
+- ✓ Commands: create-story, dev-story, code-review, git-commit, run, queue, epic, raw — v1.0
 - ✓ Interface-based design for testability (Executor, Printer) — existing
 - ✓ Go template expansion for prompts — existing
+- ✓ Status-based workflow routing from sprint-status.yaml — v1.0
+- ✓ Run command auto-routing based on status — v1.0
+- ✓ Queue command with status routing and done-skip — v1.0
+- ✓ Epic command for batch execution with numeric sorting — v1.0
+- ✓ Fail-fast on story failure — v1.0
 
 ### Active
 
-- [ ] Status-based workflow routing: CLI reads story status from `_bmad-output/implementation-artifacts/sprint-status.yaml` and routes to correct workflow
-  - `backlog` → `create-story`
-  - `ready-for-dev` / `in-progress` → `dev-story`
-  - `review` → `code-review`
-- [ ] Apply routing to all story execution: `run`, `queue`, and new `epic` commands
-- [ ] New `epic` command: `bmad-automate epic <epic-id>` runs all non-done stories for an epic in numeric order
-- [ ] Stop immediately on story failure during epic execution
+(None currently — v1.0 milestone complete)
 
 ### Out of Scope
 
@@ -47,13 +59,6 @@ Eliminate manual workflow selection by automatically routing stories to the corr
 - Story keys follow pattern: `{epic#}-{story#}-{description}` (e.g., `7-1-define-schema`)
 - Statuses: `backlog`, `ready-for-dev`, `in-progress`, `review`, `done`
 
-**Existing Architecture:**
-
-- Layered CLI with dependency injection
-- Stateless execution model
-- Commands use `RunE` pattern for testable exit codes
-- Workflows defined in `config/workflows.yaml` using Go templates
-
 **Workflow Mapping:**
 | Status | Workflow |
 |--------|----------|
@@ -70,13 +75,18 @@ Eliminate manual workflow selection by automatically routing stories to the corr
 
 ## Key Decisions
 
-| Decision                             | Rationale                                         | Outcome   |
-| ------------------------------------ | ------------------------------------------------- | --------- |
-| Auto-detect only, no manual override | Simplicity — status is source of truth            | — Pending |
-| Stop on first failure in epic        | Allows investigation before continuing            | — Pending |
-| Sequential execution only            | Stories may have dependencies                     | — Pending |
-| Read-only sprint-status.yaml access  | Separation of concerns — status managed elsewhere | — Pending |
+| Decision                             | Rationale                                             | Outcome |
+| ------------------------------------ | ----------------------------------------------------- | ------- |
+| Auto-detect only, no manual override | Simplicity — status is source of truth                | ✓ Good  |
+| Stop on first failure in epic        | Allows investigation before continuing                | ✓ Good  |
+| Sequential execution only            | Stories may have dependencies                         | ✓ Good  |
+| Read-only sprint-status.yaml access  | Separation of concerns — status managed elsewhere     | ✓ Good  |
+| yaml.v3 instead of Viper for status  | Simpler for single file with known structure          | ✓ Good  |
+| Package-level router function        | Pure mapping with no state needed                     | ✓ Good  |
+| StatusReader injected via App struct | Testability — allows mock injection                   | ✓ Good  |
+| Done stories skipped in queue        | Allows mixed-status batches without failure           | ✓ Good  |
+| Epic reuses QueueRunner              | DRY — inherits all routing, skip, and fail-fast logic | ✓ Good  |
 
 ---
 
-_Last updated: 2026-01-08 after initialization_
+_Last updated: 2026-01-08 after v1.0 milestone_
