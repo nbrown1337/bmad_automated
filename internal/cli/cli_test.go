@@ -11,6 +11,7 @@ import (
 	"bmad-automate/internal/claude"
 	"bmad-automate/internal/config"
 	"bmad-automate/internal/output"
+	"bmad-automate/internal/status"
 	"bmad-automate/internal/workflow"
 )
 
@@ -27,13 +28,15 @@ func setupTestApp() *App {
 	}
 	runner := workflow.NewRunner(mockExecutor, printer, cfg)
 	queue := workflow.NewQueueRunner(runner)
+	statusReader := status.NewReader("")
 
 	return &App{
-		Config:   cfg,
-		Executor: mockExecutor,
-		Printer:  printer,
-		Runner:   runner,
-		Queue:    queue,
+		Config:       cfg,
+		Executor:     mockExecutor,
+		Printer:      printer,
+		Runner:       runner,
+		Queue:        queue,
+		StatusReader: statusReader,
 	}
 }
 
@@ -47,6 +50,7 @@ func TestNewApp(t *testing.T) {
 	assert.NotNil(t, app.Printer)
 	assert.NotNil(t, app.Runner)
 	assert.NotNil(t, app.Queue)
+	assert.NotNil(t, app.StatusReader)
 	assert.Equal(t, cfg, app.Config)
 }
 
@@ -292,17 +296,20 @@ func setupFailingTestApp() *App {
 	}
 	runner := workflow.NewRunner(mockExecutor, printer, cfg)
 	queue := workflow.NewQueueRunner(runner)
+	statusReader := status.NewReader("")
 
 	return &App{
-		Config:   cfg,
-		Executor: mockExecutor,
-		Printer:  printer,
-		Runner:   runner,
-		Queue:    queue,
+		Config:       cfg,
+		Executor:     mockExecutor,
+		Printer:      printer,
+		Runner:       runner,
+		Queue:        queue,
+		StatusReader: statusReader,
 	}
 }
 
 func TestCommandExecution_Success(t *testing.T) {
+	// Note: "run" command excluded - it requires sprint-status.yaml and is tested in run_test.go
 	tests := []struct {
 		command string
 		args    []string
@@ -311,7 +318,6 @@ func TestCommandExecution_Success(t *testing.T) {
 		{"dev-story", []string{"TEST-123"}},
 		{"code-review", []string{"TEST-123"}},
 		{"git-commit", []string{"TEST-123"}},
-		{"run", []string{"TEST-123"}},
 		{"queue", []string{"TEST-123", "TEST-456"}},
 		{"raw", []string{"hello", "world"}},
 	}
@@ -333,6 +339,7 @@ func TestCommandExecution_Success(t *testing.T) {
 }
 
 func TestCommandExecution_Failure(t *testing.T) {
+	// Note: "run" command excluded - it requires sprint-status.yaml and is tested in run_test.go
 	tests := []struct {
 		command string
 		args    []string
@@ -341,7 +348,6 @@ func TestCommandExecution_Failure(t *testing.T) {
 		{"dev-story", []string{"TEST-123"}},
 		{"code-review", []string{"TEST-123"}},
 		{"git-commit", []string{"TEST-123"}},
-		{"run", []string{"TEST-123"}},
 		{"queue", []string{"TEST-123"}},
 		{"raw", []string{"hello"}},
 	}
