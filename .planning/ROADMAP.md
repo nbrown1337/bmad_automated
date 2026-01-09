@@ -4,6 +4,7 @@
 
 - [v1.0 Status-Based Workflow Routing](milestones/v1.0-ROADMAP.md) (Phases 1-5) — SHIPPED 2026-01-08
 - [v1.1 Full Story Lifecycle](milestones/v1.1-ROADMAP.md) (Phases 6-13) — SHIPPED 2026-01-09
+- 🚧 **v1.2 Documentation** - Phases 14-19 (in progress)
 
 ## Completed Milestones
 
@@ -53,3 +54,84 @@
 | 11. Error Recovery & Resume | v1.1      | 1/1            | Complete | 2026-01-09 |
 | 12. Dry Run Mode            | v1.1      | 2/2            | Complete | 2026-01-09 |
 | 13. Enhanced Progress UI    | v1.1      | 1/1            | Complete | 2026-01-09 |
+
+### 🚧 v1.2 Documentation (In Progress)
+
+**Milestone Goal:** Comprehensive documentation for open-sourced project — go doc comments throughout codebase, updated docs/, contribution guides, and API examples.
+
+#### Phase 14: GoDoc Core Packages
+
+**Goal**: Add comprehensive go doc comments to `internal/claude`, `internal/lifecycle`, `internal/workflow`
+**Depends on**: Previous milestone complete
+**Research**: Unlikely (standard Go documentation patterns)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 14-01: TBD (run /gsd:plan-phase 14 to break down)
+
+#### Phase 15: GoDoc Supporting Packages
+
+**Goal**: Add doc comments to `internal/cli`, `internal/router`, `internal/status`, `internal/state`, `internal/output`, `internal/config`
+**Depends on**: Phase 14
+**Research**: Unlikely (standard Go documentation patterns)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 15-01: TBD
+
+#### Phase 16: Package Documentation
+
+**Goal**: Add package-level doc.go files with overviews and examples for each package
+**Depends on**: Phase 15
+**Research**: Unlikely (standard Go documentation patterns)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 16-01: TBD
+
+#### Phase 17: Update Docs Folder
+
+**Goal**: Update existing docs (README, USER_GUIDE, CLI_REFERENCE, ARCHITECTURE, PACKAGES, DEVELOPMENT) for accuracy and completeness
+**Depends on**: Phase 16
+**Research**: Unlikely (internal content)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 17-01: TBD
+
+#### Phase 18: Contribution Guide
+
+**Goal**: Add CONTRIBUTING.md, CODE_OF_CONDUCT.md, and update root README for open source
+**Depends on**: Phase 17
+**Research**: Unlikely (standard open source patterns)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 18-01: TBD
+
+#### Phase 19: API Examples
+
+**Goal**: Add runnable examples and usage patterns in docs/examples/ folder
+**Depends on**: Phase 18
+**Research**: Unlikely (internal patterns)
+**Plans**: TBD
+
+Plans:
+
+- [ ] 19-01: TBD
+
+## Progress (v1.2)
+
+| Phase                         | Milestone | Plans Complete | Status      | Completed |
+| ----------------------------- | --------- | -------------- | ----------- | --------- |
+| 14. GoDoc Core Packages       | v1.2      | 0/?            | Not started | -         |
+| 15. GoDoc Supporting Packages | v1.2      | 0/?            | Not started | -         |
+| 16. Package Documentation     | v1.2      | 0/?            | Not started | -         |
+| 17. Update Docs Folder        | v1.2      | 0/?            | Not started | -         |
+| 18. Contribution Guide        | v1.2      | 0/?            | Not started | -         |
+| 19. API Examples              | v1.2      | 0/?            | Not started | -         |
