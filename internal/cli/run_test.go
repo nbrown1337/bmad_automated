@@ -208,12 +208,14 @@ func TestRunCommand_FullLifecycleExecution(t *testing.T) {
 			}
 			mockWriter := &MockStatusWriter{}
 			statusReader := status.NewReader(tmpDir)
+			printer := output.NewPrinterWithWriter(&bytes.Buffer{}) // Capture output
 
 			app := &App{
 				Config:       config.DefaultConfig(),
 				StatusReader: statusReader,
 				StatusWriter: mockWriter,
 				Runner:       mockRunner,
+				Printer:      printer,
 			}
 
 			rootCmd := NewRootCommand(app)
@@ -258,12 +260,14 @@ func TestRunCommand_LifecycleStoryNotFound(t *testing.T) {
 	mockRunner := &MockWorkflowRunner{}
 	mockWriter := &MockStatusWriter{}
 	statusReader := status.NewReader(tmpDir)
+	printer := output.NewPrinterWithWriter(&bytes.Buffer{}) // Capture output
 
 	app := &App{
 		Config:       config.DefaultConfig(),
 		StatusReader: statusReader,
 		StatusWriter: mockWriter,
 		Runner:       mockRunner,
+		Printer:      printer,
 	}
 
 	rootCmd := NewRootCommand(app)

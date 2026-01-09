@@ -56,6 +56,11 @@ Use --dry-run to preview workflows without executing them.`,
 				return nil
 			}
 
+			// Set up progress callback to show step progress
+			executor.SetProgressCallback(func(stepIndex, totalSteps int, workflow string) {
+				app.Printer.StepStart(stepIndex, totalSteps, workflow)
+			})
+
 			// Execute the full lifecycle
 			err := executor.Execute(ctx, storyKey)
 			if err != nil {
