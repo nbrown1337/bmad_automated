@@ -48,11 +48,12 @@ Plans:
 **Goal**: New package that runs the complete workflow sequence for one story
 **Depends on**: Phase 6
 **Research**: Unlikely (internal patterns)
-**Plans**: TBD
+**Plans**: 0/2 complete
 
 Plans:
 
-- [ ] 07-01: TBD (run /gsd:plan-phase 7 to break down)
+- [ ] 07-01: Status Writer (TDD) - Add UpdateStatus to status package
+- [ ] 07-02: Lifecycle Executor (TDD) - Orchestrate full story lifecycle
 
 **Details:**
 
@@ -171,7 +172,7 @@ Plans:
 | 4. Update Queue Command     | v1.0      | 1/1            | Complete    | 2026-01-08 |
 | 5. Epic Command             | v1.0      | 1/1            | Complete    | 2026-01-08 |
 | 6. Lifecycle Definition     | v1.1      | 1/1            | Complete    | 2026-01-08 |
-| 7. Story Lifecycle Executor | v1.1      | 0/?            | Not started | -          |
+| 7. Story Lifecycle Executor | v1.1      | 0/2            | Not started | -          |
 | 8. Update Run Command       | v1.1      | 0/?            | Not started | -          |
 | 9. Update Epic Command      | v1.1      | 0/?            | Not started | -          |
 | 10. Update Queue Command    | v1.1      | 0/?            | Not started | -          |
