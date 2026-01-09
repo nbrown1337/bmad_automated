@@ -97,15 +97,104 @@ Instead of manually running each step, let `bmad-automate` determine what to do:
 bmad-automate run PROJ-123
 ```
 
-The tool reads your story's status from the sprint status file and runs the appropriate workflow:
+The `run` command now executes the **complete lifecycle** from the story's current status all the way to `done`. It auto-updates the status after each successful step and stops at completion or on the first failure.
 
-| Story Status    | Action Taken             |
-| --------------- | ------------------------ |
-| `backlog`       | Creates story definition |
-| `ready-for-dev` | Implements story         |
-| `in-progress`   | Continues implementation |
-| `review`        | Runs code review         |
-| `done`          | Skips (already complete) |
+| Story Status    | Remaining Lifecycle                                            |
+| --------------- | -------------------------------------------------------------- |
+| `backlog`       | create-story -> dev-story -> code-review -> git-commit -> done |
+| `ready-for-dev` | dev-story -> code-review -> git-commit -> done                 |
+| `in-progress`   | dev-story -> code-review -> git-commit -> done                 |
+| `review`        | code-review -> git-commit -> done                              |
+| `done`          | No action (story already complete)                             |
+
+### Full Lifecycle Execution
+
+The `run` command processes stories through their entire remaining lifecycle automatically:
+
+```bash
+bmad-automate run PROJ-123
+```
+
+**Example output:**
+
+```
+[1/4] create-story
+  ... workflow output ...
+
+[2/4] dev-story
+  ... workflow output ...
+
+[3/4] code-review
+  ... workflow output ...
+
+[4/4] git-commit
+  ... workflow output ...
+
+Story PROJ-123 completed successfully
+```
+
+**How it works:**
+
+1. Reads the story's current status from `sprint-status.yaml`
+2. Determines remaining lifecycle steps based on status
+3. Executes each workflow in sequence
+4. Updates status in `sprint-status.yaml` after each successful step
+5. Stops at `done` or on first failure
+
+### Dry Run Mode
+
+Preview what workflows will run without executing them:
+
+```bash
+bmad-automate run --dry-run PROJ-123
+```
+
+**Example output:**
+
+```
+Dry run for story PROJ-123:
+  1. create-story -> ready-for-dev
+  2. dev-story -> review
+  3. code-review -> done
+  4. git-commit -> done
+```
+
+Dry run is available for all lifecycle commands:
+
+```bash
+bmad-automate run --dry-run PROJ-123           # Single story
+bmad-automate queue --dry-run PROJ-123 PROJ-124  # Multiple stories
+bmad-automate epic --dry-run 05                # All stories in epic
+```
+
+### Error Recovery
+
+When a workflow fails, the tool saves execution state so you can resume from the point of failure:
+
+**State file:** `.bmad-state.json`
+
+```json
+{
+	"story_key": "PROJ-123",
+	"step_index": 2,
+	"total_steps": 4,
+	"start_status": "backlog"
+}
+```
+
+**Resuming after failure:**
+
+```bash
+# Workflow fails at step 2 (dev-story)
+bmad-automate run PROJ-123
+# Error: workflow failed: dev-story returned exit code 1
+
+# Fix the issue, then re-run
+bmad-automate run PROJ-123
+# Continues from current status (no work is lost)
+```
+
+The state file is automatically cleared on successful completion.
 
 ### Batch Processing
 
@@ -117,20 +206,33 @@ bmad-automate queue PROJ-123 PROJ-124 PROJ-125
 
 The queue:
 
-- Processes each story based on its status
+- Runs each story through its **full lifecycle** to completion
+- Auto-updates status after each successful workflow step
 - Skips completed stories
 - Stops on first failure
 - Shows a summary at the end
 
+Use `--dry-run` to preview the full execution plan:
+
+```bash
+bmad-automate queue --dry-run PROJ-123 PROJ-124 PROJ-125
+```
+
 ### Processing an Epic
 
-Run all stories in an epic:
+Run all stories in an epic through their full lifecycle:
 
 ```bash
 bmad-automate epic 05
 ```
 
-This finds all stories matching the pattern `05-{N}-*` (e.g., `05-01-auth`, `05-02-dashboard`) and processes them in order.
+This finds all stories matching the pattern `05-{N}-*` (e.g., `05-01-auth`, `05-02-dashboard`), sorts them by story number, and runs each through its complete lifecycle to completion.
+
+Use `--dry-run` to preview:
+
+```bash
+bmad-automate epic --dry-run 05
+```
 
 ### Ad-Hoc Prompts
 
@@ -360,6 +462,24 @@ Summary:
 | 0    | Success                             |
 | 1    | General error                       |
 | N    | Claude's exit code (passed through) |
+
+### Resume Capability
+
+When a lifecycle execution fails, the tool persists state to `.bmad-state.json`. This enables resume from the point of failure:
+
+1. **Failure occurs** - State is saved with current story and step index
+2. **Fix the issue** - Address whatever caused the failure
+3. **Re-run the command** - Execution continues from current status
+
+The state file is automatically deleted after successful lifecycle completion.
+
+### State File Location
+
+```
+.bmad-state.json   # In working directory (hidden file)
+```
+
+You can safely delete this file to force a fresh start from the story's current status.
 
 ### Common Issues
 
