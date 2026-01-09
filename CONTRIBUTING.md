@@ -70,6 +70,21 @@ just lint
 - Add tests for new functionality
 - Update documentation as needed
 
+## Architecture Overview
+
+The codebase follows a layered CLI architecture with dependency injection for testability:
+
+```
+CLI → Lifecycle → Workflow → Claude
+```
+
+- **CLI Layer** receives commands and delegates to lifecycle or workflow
+- **Lifecycle Layer** orchestrates multi-step story execution with state persistence
+- **Workflow Layer** executes individual workflows
+- **Claude Layer** handles subprocess communication and JSON parsing
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed diagrams and data flow.
+
 ## Project Structure
 
 ```text
@@ -80,7 +95,11 @@ bmad-automate/
 │   ├── cli/               # Cobra CLI commands
 │   ├── claude/            # Claude client and JSON parser
 │   ├── config/            # Configuration loading (Viper)
+│   ├── lifecycle/         # Story lifecycle execution
 │   ├── output/            # Terminal output (Lipgloss)
+│   ├── router/            # Status-based workflow routing
+│   ├── state/             # State persistence for resume
+│   ├── status/            # Sprint status file reading/writing
 │   └── workflow/          # Workflow orchestration
 ```
 
@@ -89,7 +108,11 @@ bmad-automate/
 - **cli**: Thin command handlers that delegate to other packages
 - **claude**: Claude CLI interaction, streaming JSON parsing
 - **config**: Configuration loading and validation
+- **lifecycle**: Full story lifecycle execution from status to done
 - **output**: All terminal output and styling
+- **router**: Status-based workflow routing
+- **state**: State persistence for error recovery and resume
+- **status**: Sprint status file reading and writing
 - **workflow**: Business logic for workflow execution
 
 ## Testing Guidelines
@@ -106,8 +129,10 @@ The codebase uses interfaces for testability:
 
 - `claude.Executor` - Mock Claude execution
 - `output.Printer` - Capture output for testing
+- `lifecycle.WorkflowRunner` - Mock workflow execution for lifecycle tests
+- `status.Reader` / `status.Writer` - Mock sprint status operations
 
-Example:
+Example (Claude mock):
 
 ```go
 func TestMyFeature(t *testing.T) {
@@ -116,6 +141,23 @@ func TestMyFeature(t *testing.T) {
         ExitCode: 0,
     }
     // Use mock in tests
+}
+```
+
+Example (Lifecycle mock):
+
+```go
+func TestLifecycleExecution(t *testing.T) {
+    mockRunner := &MockWorkflowRunner{
+        RunSingleFunc: func(ctx context.Context, workflow, storyKey string) int {
+            return 0 // Success
+        },
+    }
+    mockReader := &MockStatusReader{
+        Status: status.StatusBacklog,
+    }
+    executor := lifecycle.NewExecutor(mockRunner, mockReader, mockWriter)
+    // Test lifecycle execution
 }
 ```
 
