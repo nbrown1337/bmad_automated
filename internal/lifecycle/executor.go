@@ -2,7 +2,9 @@ package lifecycle
 
 import (
 	"context"
+	"fmt"
 
+	"bmad-automate/internal/router"
 	"bmad-automate/internal/status"
 )
 
@@ -39,6 +41,31 @@ func NewExecutor(runner WorkflowRunner, reader StatusReader, writer StatusWriter
 
 // Execute runs the complete lifecycle for a story from its current status to done.
 func (e *Executor) Execute(ctx context.Context, storyKey string) error {
-	// TODO: Implement
+	// Get current story status
+	currentStatus, err := e.statusReader.GetStoryStatus(storyKey)
+	if err != nil {
+		return err
+	}
+
+	// Get lifecycle steps from current status
+	steps, err := router.GetLifecycle(currentStatus)
+	if err != nil {
+		return err // Returns router.ErrStoryComplete for done stories
+	}
+
+	// Execute each step in sequence
+	for _, step := range steps {
+		// Run the workflow
+		exitCode := e.runner.RunSingle(ctx, step.Workflow, storyKey)
+		if exitCode != 0 {
+			return fmt.Errorf("workflow failed: %s returned exit code %d", step.Workflow, exitCode)
+		}
+
+		// Update status after successful workflow
+		if err := e.statusWriter.UpdateStatus(storyKey, step.NextStatus); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
