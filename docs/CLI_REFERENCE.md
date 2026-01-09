@@ -144,12 +144,12 @@ bmad-automate git-commit PROJ-123
 
 ### run
 
-Execute a workflow based on the story's current status in sprint-status.yaml.
+Execute the full lifecycle for a story from its current status to done.
 
 **Usage:**
 
 ```bash
-bmad-automate run <story-key>
+bmad-automate run [--dry-run] <story-key>
 ```
 
 **Arguments:**
@@ -157,38 +157,61 @@ bmad-automate run <story-key>
 |----------|----------|-------------|
 | story-key | Yes | The story identifier |
 
+**Flags:**
+| Flag | Description |
+|------|-------------|
+| `--dry-run` | Preview workflow sequence without execution |
+
 **Example:**
 
 ```bash
+# Run full lifecycle
 bmad-automate run PROJ-123
+
+# Preview what would run
+bmad-automate run --dry-run PROJ-123
 ```
 
-**Status Routing:**
+**Lifecycle Routing:**
 
-| Story Status    | Workflow Executed          |
-| --------------- | -------------------------- |
-| `backlog`       | `create-story`             |
-| `ready-for-dev` | `dev-story`                |
-| `in-progress`   | `dev-story`                |
-| `review`        | `code-review`              |
-| `done`          | No action (story complete) |
+The `run` command executes all remaining workflows to completion:
+
+| Story Status    | Remaining Lifecycle                                            |
+| --------------- | -------------------------------------------------------------- |
+| `backlog`       | create-story -> dev-story -> code-review -> git-commit -> done |
+| `ready-for-dev` | dev-story -> code-review -> git-commit -> done                 |
+| `in-progress`   | dev-story -> code-review -> git-commit -> done                 |
+| `review`        | code-review -> git-commit -> done                              |
+| `done`          | No action (story already complete)                             |
 
 **Behavior:**
 
 1. Reads story status from `_bmad-output/implementation-artifacts/sprint-status.yaml`
-2. Routes to appropriate workflow based on status
-3. Skips if story is already `done`
+2. Determines remaining lifecycle steps based on status
+3. Executes each workflow in sequence
+4. Auto-updates status in `sprint-status.yaml` after each successful step
+5. Stops at `done` or on first failure
+
+**Dry Run Output:**
+
+```
+Dry run for story PROJ-123:
+  1. create-story -> ready-for-dev
+  2. dev-story -> review
+  3. code-review -> done
+  4. git-commit -> done
+```
 
 ---
 
 ### queue
 
-Process multiple stories in batch using status-based routing.
+Run full lifecycle for multiple stories in batch.
 
 **Usage:**
 
 ```bash
-bmad-automate queue <story-key> [story-key...]
+bmad-automate queue [--dry-run] <story-key> [story-key...]
 ```
 
 **Arguments:**
@@ -196,18 +219,28 @@ bmad-automate queue <story-key> [story-key...]
 |----------|----------|-------------|
 | story-key | Yes | One or more story identifiers |
 
+**Flags:**
+| Flag | Description |
+|------|-------------|
+| `--dry-run` | Preview workflow sequence without execution |
+
 **Example:**
 
 ```bash
+# Run full lifecycle for each story
 bmad-automate queue PROJ-123 PROJ-124 PROJ-125
+
+# Preview what would run
+bmad-automate queue --dry-run PROJ-123 PROJ-124 PROJ-125
 ```
 
 **Behavior:**
 
-1. Processes each story using the `run` command logic
-2. Skips stories with status `done`
-3. Stops on first failure
-4. Displays summary with timing for each story
+1. Processes each story through its **full lifecycle** to completion
+2. Auto-updates status after each successful workflow step
+3. Skips stories with status `done`
+4. Stops on first failure
+5. Displays summary with timing for each story
 
 **Output:**
 
@@ -226,16 +259,38 @@ Summary:
   PROJ-125  ○  skipped (done)
 ```
 
+**Dry Run Output:**
+
+```
+Dry run for 3 stories:
+
+Story PROJ-123:
+  1. dev-story -> review
+  2. code-review -> done
+  3. git-commit -> done
+
+Story PROJ-124:
+  (already complete)
+
+Story PROJ-125:
+  1. create-story -> ready-for-dev
+  2. dev-story -> review
+  3. code-review -> done
+  4. git-commit -> done
+
+Total: 7 workflows across 2 stories (1 already complete)
+```
+
 ---
 
 ### epic
 
-Process all stories in an epic.
+Run full lifecycle for all stories in an epic.
 
 **Usage:**
 
 ```bash
-bmad-automate epic <epic-id>
+bmad-automate epic [--dry-run] <epic-id>
 ```
 
 **Arguments:**
@@ -243,10 +298,19 @@ bmad-automate epic <epic-id>
 |----------|----------|-------------|
 | epic-id | Yes | The epic identifier |
 
+**Flags:**
+| Flag | Description |
+|------|-------------|
+| `--dry-run` | Preview workflow sequence without execution |
+
 **Example:**
 
 ```bash
+# Run full lifecycle for all stories in epic
 bmad-automate epic 05
+
+# Preview what would run
+bmad-automate epic --dry-run 05
 ```
 
 **Story Discovery:**
@@ -269,8 +333,9 @@ Stories are sorted by story number and processed in order.
 
 1. Finds all stories matching the epic pattern
 2. Sorts by story number
-3. Processes using queue logic (status-based routing)
-4. Stops on first failure
+3. Runs each story through its **full lifecycle** to completion
+4. Auto-updates status after each successful workflow step
+5. Stops on first failure
 
 ---
 
@@ -389,6 +454,49 @@ development_status:
 - `in-progress` - Story being implemented
 - `review` - Story in code review
 - `done` - Story complete
+
+---
+
+## State File
+
+The lifecycle executor persists execution state for error recovery.
+
+**Location:**
+
+```
+.bmad-state.json   # In working directory (hidden file)
+```
+
+**Format:**
+
+```json
+{
+	"story_key": "PROJ-123",
+	"step_index": 2,
+	"total_steps": 4,
+	"start_status": "backlog"
+}
+```
+
+**Fields:**
+| Field | Description |
+|-------|-------------|
+| `story_key` | The story being processed |
+| `step_index` | 0-based index of the current/failed step |
+| `total_steps` | Total steps in the lifecycle sequence |
+| `start_status` | The story's status when execution began |
+
+**Lifecycle:**
+
+1. **Saved on failure** - State is written when a workflow step fails
+2. **Used on resume** - On re-run, execution continues from current status
+3. **Cleared on success** - State file is deleted after successful lifecycle completion
+
+**Notes:**
+
+- The state file is optional - deleting it forces a fresh start from current status
+- State is written atomically (temp file + rename) to prevent corruption
+- Each story has its own state; queue/epic commands process stories sequentially
 
 ---
 
