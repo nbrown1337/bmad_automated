@@ -4,15 +4,17 @@ Complete API reference for all internal packages in `bmad-automate`.
 
 ## Package Overview
 
-| Package               | Location             | Purpose                                            |
-| --------------------- | -------------------- | -------------------------------------------------- |
-| [cli](#cli)           | `internal/cli/`      | CLI commands, dependency injection, error handling |
-| [claude](#claude)     | `internal/claude/`   | Claude CLI execution and JSON parsing              |
-| [config](#config)     | `internal/config/`   | Configuration loading and template expansion       |
-| [output](#output)     | `internal/output/`   | Terminal formatting and styling                    |
-| [workflow](#workflow) | `internal/workflow/` | Workflow orchestration                             |
-| [status](#status)     | `internal/status/`   | Sprint status file reading                         |
-| [router](#router)     | `internal/router/`   | Workflow routing based on status                   |
+| Package                 | Location              | Purpose                                            |
+| ----------------------- | --------------------- | -------------------------------------------------- |
+| [cli](#cli)             | `internal/cli/`       | CLI commands, dependency injection, error handling |
+| [claude](#claude)       | `internal/claude/`    | Claude CLI execution and JSON parsing              |
+| [config](#config)       | `internal/config/`    | Configuration loading and template expansion       |
+| [output](#output)       | `internal/output/`    | Terminal formatting and styling                    |
+| [workflow](#workflow)   | `internal/workflow/`  | Workflow orchestration                             |
+| [lifecycle](#lifecycle) | `internal/lifecycle/` | Story lifecycle orchestration                      |
+| [state](#state)         | `internal/state/`     | Lifecycle state persistence for resume             |
+| [status](#status)       | `internal/status/`    | Sprint status file reading                         |
+| [router](#router)       | `internal/router/`    | Workflow routing based on status                   |
 
 ---
 
@@ -839,6 +841,176 @@ func (q *QueueRunner) RunQueueWithStatus(ctx context.Context, storyKeys []string
 - Routes to appropriate workflow
 - Skips "done" stories
 - Stops on first failure
+
+---
+
+## lifecycle
+
+**Package:** `internal/lifecycle`
+
+Story lifecycle orchestration from current status to done.
+
+The lifecycle package provides an Executor that runs stories through their complete workflow sequence (create->dev->review->commit) based on current status. Each step updates the story status automatically after successful completion.
+
+### Types
+
+#### Executor
+
+Orchestrates the complete story lifecycle from current status to done.
+
+```go
+type Executor struct {
+    runner           WorkflowRunner
+    statusReader     StatusReader
+    statusWriter     StatusWriter
+    progressCallback ProgressCallback
+}
+```
+
+Executor uses dependency injection for testability: WorkflowRunner executes workflows, StatusReader looks up current status, and StatusWriter persists status updates.
+
+#### WorkflowRunner
+
+Interface for executing individual workflows.
+
+```go
+type WorkflowRunner interface {
+    RunSingle(ctx context.Context, workflowName, storyKey string) int
+}
+```
+
+RunSingle executes a named workflow for a story and returns the exit code. An exit code of 0 indicates success; any non-zero value indicates failure. The `workflow.Runner` type implements this interface.
+
+#### StatusReader
+
+Interface for looking up story status.
+
+```go
+type StatusReader interface {
+    GetStoryStatus(storyKey string) (status.Status, error)
+}
+```
+
+GetStoryStatus retrieves the current status for a story key. Returns an error if the story cannot be found or the status file is invalid.
+
+#### StatusWriter
+
+Interface for persisting story status updates.
+
+```go
+type StatusWriter interface {
+    UpdateStatus(storyKey string, newStatus status.Status) error
+}
+```
+
+UpdateStatus sets a new status for a story after successful workflow completion. Returns an error if the status file cannot be written.
+
+#### ProgressCallback
+
+Callback invoked before each workflow step begins execution.
+
+```go
+type ProgressCallback func(stepIndex, totalSteps int, workflow string)
+```
+
+**Parameters:**
+
+- `stepIndex` - 1-based index of the current step
+- `totalSteps` - Total number of steps in the lifecycle
+- `workflow` - Name of the workflow about to execute
+
+The callback is optional and can be set via SetProgressCallback.
+
+### Functions
+
+#### NewExecutor
+
+Creates a new Executor with the required dependencies.
+
+```go
+func NewExecutor(runner WorkflowRunner, reader StatusReader, writer StatusWriter) *Executor
+```
+
+**Parameters:**
+
+- `runner` - Executes workflows
+- `reader` - Looks up story status
+- `writer` - Persists status updates
+
+**Returns:**
+
+- Configured `*Executor` ready for use
+
+#### SetProgressCallback
+
+Configures an optional progress callback for workflow execution.
+
+```go
+func (e *Executor) SetProgressCallback(cb ProgressCallback)
+```
+
+**Parameters:**
+
+- `cb` - Callback to invoke before each workflow step
+
+#### Execute
+
+Runs the complete story lifecycle from current status to done.
+
+```go
+func (e *Executor) Execute(ctx context.Context, storyKey string) error
+```
+
+**Parameters:**
+
+- `ctx` - Context for cancellation
+- `storyKey` - Story identifier to process
+
+**Returns:**
+
+- `nil` on success
+- Error if status lookup, workflow execution, or status update fails
+- `router.ErrStoryComplete` for stories already done
+
+**Behavior:**
+
+- Looks up story's current status
+- Determines remaining workflow steps via `router.GetLifecycle`
+- Runs each workflow in sequence
+- Updates status after each successful workflow
+- Stops on first error (fail-fast)
+
+#### GetSteps
+
+Returns the remaining lifecycle steps for a story without executing them.
+
+```go
+func (e *Executor) GetSteps(storyKey string) ([]router.LifecycleStep, error)
+```
+
+**Parameters:**
+
+- `storyKey` - Story identifier to check
+
+**Returns:**
+
+- Slice of `router.LifecycleStep` showing planned execution path
+- Error if status lookup fails
+- `router.ErrStoryComplete` for stories already done
+
+**Example:**
+
+```go
+executor := lifecycle.NewExecutor(runner, statusReader, statusWriter)
+executor.SetProgressCallback(func(step, total int, workflow string) {
+    fmt.Printf("Step %d/%d: %s\n", step, total, workflow)
+})
+
+err := executor.Execute(ctx, "PROJ-123")
+if errors.Is(err, router.ErrStoryComplete) {
+    fmt.Println("Story already complete")
+}
+```
 
 ---
 
