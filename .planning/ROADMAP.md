@@ -95,16 +95,16 @@ Plans:
 - Each story runs to completion before next story starts
 - Maintains existing fail-fast behavior
 
-#### Phase 10: Update Queue Command
+#### Phase 10: Update Queue Command ✅
 
 **Goal**: Queue also uses lifecycle executor for consistency
 **Depends on**: Phase 9
 **Research**: Unlikely (internal patterns)
-**Plans**: TBD
+**Plans**: 1/1 complete
 
 Plans:
 
-- [ ] 10-01: TBD (run /gsd:plan-phase 10 to break down)
+- [x] 10-01: Queue command with lifecycle execution (TDD) — completed 2026-01-09
 
 **Details:**
 
@@ -175,7 +175,7 @@ Plans:
 | 7. Story Lifecycle Executor | v1.1      | 2/2            | Complete    | 2026-01-09 |
 | 8. Update Run Command       | v1.1      | 1/1            | Complete    | 2026-01-09 |
 | 9. Update Epic Command      | v1.1      | 1/1            | Complete    | 2026-01-09 |
-| 10. Update Queue Command    | v1.1      | 0/?            | Not started | -          |
+| 10. Update Queue Command    | v1.1      | 1/1            | Complete    | 2026-01-09 |
 | 11. Error Recovery & Resume | v1.1      | 0/?            | Not started | -          |
 | 12. Dry Run Mode            | v1.1      | 0/?            | Not started | -          |
 | 13. Enhanced Progress UI    | v1.1      | 0/?            | Not started | -          |
