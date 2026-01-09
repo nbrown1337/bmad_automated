@@ -27,7 +27,6 @@ func setupTestApp() *App {
 		ExitCode: 0,
 	}
 	runner := workflow.NewRunner(mockExecutor, printer, cfg)
-	queue := workflow.NewQueueRunner(runner)
 	statusReader := status.NewReader("")
 
 	return &App{
@@ -35,7 +34,6 @@ func setupTestApp() *App {
 		Executor:     mockExecutor,
 		Printer:      printer,
 		Runner:       runner,
-		Queue:        queue,
 		StatusReader: statusReader,
 	}
 }
@@ -49,7 +47,6 @@ func TestNewApp(t *testing.T) {
 	assert.NotNil(t, app.Executor)
 	assert.NotNil(t, app.Printer)
 	assert.NotNil(t, app.Runner)
-	assert.NotNil(t, app.Queue)
 	assert.NotNil(t, app.StatusReader)
 	assert.Equal(t, cfg, app.Config)
 }
@@ -295,7 +292,6 @@ func setupFailingTestApp() *App {
 		ExitCode: 1, // Simulate failure
 	}
 	runner := workflow.NewRunner(mockExecutor, printer, cfg)
-	queue := workflow.NewQueueRunner(runner)
 	statusReader := status.NewReader("")
 
 	return &App{
@@ -303,7 +299,6 @@ func setupFailingTestApp() *App {
 		Executor:     mockExecutor,
 		Printer:      printer,
 		Runner:       runner,
-		Queue:        queue,
 		StatusReader: statusReader,
 	}
 }

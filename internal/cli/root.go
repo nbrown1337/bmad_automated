@@ -38,7 +38,6 @@ type App struct {
 	Executor     claude.Executor
 	Printer      output.Printer
 	Runner       WorkflowRunner
-	Queue        *workflow.QueueRunner
 	StatusReader StatusReader
 	StatusWriter StatusWriter
 }
@@ -57,7 +56,6 @@ func NewApp(cfg *config.Config) *App {
 	})
 
 	runner := workflow.NewRunner(executor, printer, cfg)
-	queue := workflow.NewQueueRunner(runner)
 	statusReader := status.NewReader("")
 	statusWriter := status.NewWriter("")
 
@@ -66,7 +64,6 @@ func NewApp(cfg *config.Config) *App {
 		Executor:     executor,
 		Printer:      printer,
 		Runner:       runner,
-		Queue:        queue,
 		StatusReader: statusReader,
 		StatusWriter: statusWriter,
 	}

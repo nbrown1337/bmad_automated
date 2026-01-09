@@ -68,7 +68,6 @@ func setupRunTestApp(tmpDir string) (*App, *claude.MockExecutor, *bytes.Buffer) 
 		ExitCode: 0,
 	}
 	runner := workflow.NewRunner(mockExecutor, printer, cfg)
-	queue := workflow.NewQueueRunner(runner)
 	statusReader := status.NewReader(tmpDir)
 	statusWriter := status.NewWriter(tmpDir)
 
@@ -77,7 +76,6 @@ func setupRunTestApp(tmpDir string) (*App, *claude.MockExecutor, *bytes.Buffer) 
 		Executor:     mockExecutor,
 		Printer:      printer,
 		Runner:       runner,
-		Queue:        queue,
 		StatusReader: statusReader,
 		StatusWriter: statusWriter,
 	}, mockExecutor, buf
