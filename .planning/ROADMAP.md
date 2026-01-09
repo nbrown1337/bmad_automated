@@ -90,11 +90,13 @@ Plans:
 **Goal**: Add package-level doc.go files with overviews and examples for each package
 **Depends on**: Phase 15
 **Research**: Unlikely (standard Go documentation patterns)
-**Plans**: TBD
+**Plans**: 3
 
 Plans:
 
-- [ ] 16-01: TBD
+- [ ] 16-01: claude, lifecycle, workflow package doc.go files
+- [ ] 16-02: cli, output package doc.go files
+- [ ] 16-03: config, router, state, status package doc.go files
 
 #### Phase 17: Update Docs Folder
 
@@ -135,7 +137,7 @@ Plans:
 | ----------------------------- | --------- | -------------- | ----------- | ---------- |
 | 14. GoDoc Core Packages       | v1.2      | 3/3            | Complete    | 2026-01-09 |
 | 15. GoDoc Supporting Packages | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 16. Package Documentation     | v1.2      | 0/?            | Not started | -          |
+| 16. Package Documentation     | v1.2      | 0/3            | Planned     | -          |
 | 17. Update Docs Folder        | v1.2      | 0/?            | Not started | -          |
 | 18. Contribution Guide        | v1.2      | 0/?            | Not started | -          |
 | 19. API Examples              | v1.2      | 0/?            | Not started | -          |
