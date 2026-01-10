@@ -4,7 +4,7 @@
 
 - [v1.0 Status-Based Workflow Routing](milestones/v1.0-ROADMAP.md) (Phases 1-5) — SHIPPED 2026-01-08
 - [v1.1 Full Story Lifecycle](milestones/v1.1-ROADMAP.md) (Phases 6-13) — SHIPPED 2026-01-09
-- 🚧 **v1.2 Documentation** - Phases 14-18 (in progress)
+- [v1.2 Documentation](milestones/v1.2-ROADMAP.md) (Phases 14-18) — SHIPPED 2026-01-09
 
 ## Completed Milestones
 
@@ -55,7 +55,7 @@
 | 12. Dry Run Mode            | v1.1      | 2/2            | Complete | 2026-01-09 |
 | 13. Enhanced Progress UI    | v1.1      | 1/1            | Complete | 2026-01-09 |
 
-### 🚧 v1.2 Documentation (In Progress)
+### v1.2 Documentation — SHIPPED 2026-01-09
 
 **Milestone Goal:** Comprehensive documentation for open-sourced project — go doc comments throughout codebase, updated docs/, contribution guides, and API examples.
 
@@ -116,18 +116,18 @@ Plans:
 **Goal**: Add runnable examples and usage patterns in docs/examples/ folder
 **Depends on**: Phase 17
 **Research**: Unlikely (internal patterns)
-**Plans**: TBD
+**Plans**: 1
 
 Plans:
 
-- [ ] 18-01: TBD
+- [x] 18-01: CLI Cookbook with recipe-style examples
 
 ## Progress (v1.2)
 
-| Phase                         | Milestone | Plans Complete | Status      | Completed  |
-| ----------------------------- | --------- | -------------- | ----------- | ---------- |
-| 14. GoDoc Core Packages       | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 15. GoDoc Supporting Packages | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 16. Package Documentation     | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 17. Update Docs Folder        | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 18. API Examples              | v1.2      | 0/?            | Not started | -          |
+| Phase                         | Milestone | Plans Complete | Status   | Completed  |
+| ----------------------------- | --------- | -------------- | -------- | ---------- |
+| 14. GoDoc Core Packages       | v1.2      | 3/3            | Complete | 2026-01-09 |
+| 15. GoDoc Supporting Packages | v1.2      | 3/3            | Complete | 2026-01-09 |
+| 16. Package Documentation     | v1.2      | 3/3            | Complete | 2026-01-09 |
+| 17. Update Docs Folder        | v1.2      | 3/3            | Complete | 2026-01-09 |
+| 18. API Examples              | v1.2      | 1/1            | Complete | 2026-01-09 |
