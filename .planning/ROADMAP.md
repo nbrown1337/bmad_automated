@@ -4,7 +4,7 @@
 
 - [v1.0 Status-Based Workflow Routing](milestones/v1.0-ROADMAP.md) (Phases 1-5) — SHIPPED 2026-01-08
 - [v1.1 Full Story Lifecycle](milestones/v1.1-ROADMAP.md) (Phases 6-13) — SHIPPED 2026-01-09
-- 🚧 **v1.2 Documentation** - Phases 14-19 (in progress)
+- 🚧 **v1.2 Documentation** - Phases 14-18 (in progress)
 
 ## Completed Milestones
 
@@ -111,27 +111,16 @@ Plans:
 - [x] 17-02: USER_GUIDE.md and CLI_REFERENCE.md - v1.1 features
 - [x] 17-03: ARCHITECTURE.md, README.md, DEVELOPMENT.md - diagrams and structure
 
-#### Phase 18: Contribution Guide
-
-**Goal**: Add CONTRIBUTING.md, CODE_OF_CONDUCT.md, and update root README for open source
-**Depends on**: Phase 17
-**Research**: Unlikely (standard open source patterns)
-**Plans**: TBD
-
-Plans:
-
-- [ ] 18-01: TBD
-
-#### Phase 19: API Examples
+#### Phase 18: API Examples
 
 **Goal**: Add runnable examples and usage patterns in docs/examples/ folder
-**Depends on**: Phase 18
+**Depends on**: Phase 17
 **Research**: Unlikely (internal patterns)
 **Plans**: TBD
 
 Plans:
 
-- [ ] 19-01: TBD
+- [ ] 18-01: TBD
 
 ## Progress (v1.2)
 
@@ -141,5 +130,4 @@ Plans:
 | 15. GoDoc Supporting Packages | v1.2      | 3/3            | Complete    | 2026-01-09 |
 | 16. Package Documentation     | v1.2      | 3/3            | Complete    | 2026-01-09 |
 | 17. Update Docs Folder        | v1.2      | 3/3            | Complete    | 2026-01-09 |
-| 18. Contribution Guide        | v1.2      | 0/?            | Not started | -          |
-| 19. API Examples              | v1.2      | 0/?            | Not started | -          |
+| 18. API Examples              | v1.2      | 0/?            | Not started | -          |
