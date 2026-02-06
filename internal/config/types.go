@@ -98,13 +98,13 @@ func DefaultConfig() *Config {
 	return &Config{
 		Workflows: map[string]WorkflowConfig{
 			"create-story": {
-				PromptTemplate: "/bmad:bmm:workflows:create-story - Create story: {{.StoryKey}}. Do not ask questions.",
+				PromptTemplate: "/bmad-bmm-create-story {{.StoryKey}} - Do not ask questions, use best judgment. When prompted for choices, always choose to continue.",
 			},
 			"dev-story": {
-				PromptTemplate: "/bmad:bmm:workflows:dev-story - Work on story: {{.StoryKey}}. Complete all tasks. Run tests after each implementation. Do not ask clarifying questions - use best judgment based on existing patterns.",
+				PromptTemplate: "/bmad-bmm-dev-story {{.StoryKey}} - Complete all tasks. Run tests after each implementation. Do not ask clarifying questions - use best judgment based on existing patterns. When prompted for choices, always choose to continue.",
 			},
 			"code-review": {
-				PromptTemplate: "/bmad:bmm:workflows:code-review - Review story: {{.StoryKey}}. When presenting fix options, always choose to auto-fix all issues immediately. Do not wait for user input.",
+				PromptTemplate: "/bmad-bmm-code-review {{.StoryKey}} - When presenting fix options, always choose to auto-fix all issues immediately. Do not wait for user input. When prompted for choices, always choose to continue.",
 			},
 			"git-commit": {
 				PromptTemplate: "Commit all changes for story {{.StoryKey}} with a descriptive commit message following conventional commits format. Then push to the current branch. Do not ask questions.",
